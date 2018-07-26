@@ -170,6 +170,8 @@ main = do
             , "base"
             , "-package"
             , "array"
+            , "-package"
+            , "deepseq"
             ]
         , compiler = c
         }

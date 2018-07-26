@@ -107,8 +107,7 @@ marshalCLabel clbl = do
           fromString $
           if GHC.externallyVisibleCLabel clbl
             then asmPpr dflags clbl
-            else def_mod_prefix <> asmPpr dflags clbl
-      }
+            else def_mod_prefix <> asmPpr dflags clbl      }
 
 marshalLabel :: GHC.Label -> CodeGen SBS.ShortByteString
 marshalLabel lbl = do
