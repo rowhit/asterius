@@ -36,25 +36,24 @@ import Text.Show.Pretty
 data Task = Task
   { input, outputWasm, outputNode :: FilePath
   , outputLinkReport, outputGraphViz :: Maybe FilePath
-  , force, debug, optimize, outputIR, run :: Bool
+  , debug, optimize, outputIR, run :: Bool
   }
 
 parseTask :: Parser Task
 parseTask =
-  (\(i, m_wasm, m_node, m_report, m_gv, fl, dbg, opt, ir, r) ->
+  (\(i, m_wasm, m_node, m_report, m_gv, dbg, opt, ir, r) ->
      Task
        { input = i
        , outputWasm = fromMaybe (i -<.> "wasm") m_wasm
        , outputNode = fromMaybe (i -<.> "js") m_node
        , outputLinkReport = m_report
        , outputGraphViz = m_gv
-       , force = fl
        , debug = dbg
        , optimize = opt
        , outputIR = ir
        , run = r
        }) <$>
-  ((,,,,,,,,,) <$> strOption (long "input" <> help "Path of the Main module") <*>
+  ((,,,,,,,,) <$> strOption (long "input" <> help "Path of the Main module") <*>
    optional
      (strOption
         (long "output-wasm" <>
@@ -71,9 +70,6 @@ parseTask =
      (strOption
         (long "output-graphviz" <>
          help "Output path of GraphViz file of symbol dependencies")) <*>
-   switch
-     (long "force" <>
-      help "Attempt to link even when non-existent call target exists") <*>
    switch (long "debug" <> help "Enable debug mode in the runtime") <*>
    switch (long "optimize" <> help "Enable binaryen & V8 optimization") <*>
    switch (long "output-ir" <> help "Output Asterius IR of compiled modules") <*>
@@ -204,7 +200,7 @@ main = do
   final_store <- readIORef final_store_ref
   putStrLn "[INFO] Attempting to link into a standalone WebAssembly module"
   let (!m_final_m, !report) =
-        linkStart force debug ffi_state final_store $
+        linkStart debug ffi_state final_store $
         if debug
           then [ "main"
                , "__asterius_Load_Sp"
