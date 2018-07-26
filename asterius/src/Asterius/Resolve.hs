@@ -263,7 +263,7 @@ mergeSymbols force_link debug AsteriusStore {..} syms =
                               mempty
                                 { functionMap =
                                     [ ( i_staging_sym
-                                      , removeI8Stores $
+                                      , patchWritePtrArrayOp $
                                         resolveGlobalRegs $
                                         if force_link
                                           then maskUnknownCCallTargets func
